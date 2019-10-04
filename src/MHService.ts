@@ -3,7 +3,8 @@ import {GemData, AmrData} from './DataList';
 import {Armor} from './Armor';
 import {AType} from './AType';
 import {SKL} from './SKL';
-import {Gem} from "./Gem";
+import {Gem} from './Gem';
+import {SKLQry} from './SKLQry';
 import {Slot} from './Slot';
 
 export class MHService {
@@ -23,19 +24,20 @@ export class MHService {
         const query =
             {
                 skills: [
-                    {skl: SKL.CRIT_EYE, min: 7},
-                    {skl: SKL.ATK, min: 4},
-                    {skl: SKL.HANDICRAFT, min: 1},
+                    new SKLQry(SKL.CRIT_EYE, 7),
+                    new SKLQry(SKL.HANDICRAFT, 2),
+                    new SKLQry(SKL.ATK, 4),
                 ],
-                extraSlots: [1,1]
+                extraSlots: [1,1],
+                armorTierFilter: 1
             }
         this.querySets(query);
 
     }
 
-    public querySets(query: {skills: {skl: SKL, min: number}[], extraSlots: number[]}, showLog: boolean = false): void {
+    public querySets(query: {skills: SKLQry[], extraSlots: number[], armorTierFilter: number}, showLog: boolean = false): void {
         // fix the query so highest tier skill comes first
-        this.sortSkillByTier(query.skills);
+        query.skills = this.sortSkillByTier(query.skills);
 
         console.log('Finding sets for: ');
 
@@ -56,8 +58,8 @@ export class MHService {
     }
 
     /** re orders the skills, highest comes first */
-    private sortSkillByTier(skls: {skl: SKL, min: number}[]): void {
-        skls.sort( (a,b) => this.getGem(a.skl).tier - this.getGem(a.skl).tier);
+    private sortSkillByTier(sq: SKLQry[]): SKLQry[] {
+        return sq.sort( (a,b) => this.getGem(b.skl).tier - this.getGem(a.skl).tier);
     }
 
     /** Deserialize all json data into data objects for runtime */
@@ -89,7 +91,7 @@ export class MHService {
      * query = the skills to create and filter
      * extraSlots = use this for mantles or weapons with extra slots ex: [3,2,2] = 3 slots with teir 3, 2, 2
      */
-    private getBuildSets(query: {skills: {skl: SKL, min: number}[], extraSlots: number[]} ): BuildSet[] {
+    private getBuildSets(query: {skills: SKLQry[], extraSlots: number[], armorTierFilter: number} ): BuildSet[] {
         const date: Date = new Date();
         const startTime = date.getMilliseconds();
 
@@ -107,7 +109,7 @@ export class MHService {
         // ex: 2(heads) * 3(chest) * 2(arms) * 2(legs) = 24 total possible combination
         // for best results, we have to create all the combinations posssible first
         // then filter from there using queries
-        let allSetCombinations: Armor[][] = this.getAllPossibleSetCombination();
+        let allSetCombinations: Armor[][] = this.getAllPossibleSetCombination(query.armorTierFilter);
         console.log('max possible combinations: ' + allSetCombinations.length);
 
         // extra slots gets added to eveyr combination if requested
@@ -121,17 +123,16 @@ export class MHService {
         // apply query(s)
         // tempSets.sort( (a,b) => b.getSkillCount(SKL.ATK) - a.getSkillCount(SKL.ATK));
         let isFilterProgressError: boolean = true;
-        for(const skillObj of query.skills){
-            const sklObj: {skl: SKL, min: number} = skillObj;
+        for(const sq of query.skills){
 
-            // try gemming into slots to reach the min req
-            this.gemAllSetsWithSkillToMin(tempSets, skillObj.skl, skillObj.min);
+            // try setting gems into slots to reach the min req queried
+            this.gemAllSetsWithSkillToMin(tempSets, sq.skl, sq.min);
 
             // if tempSets return filters eventually reaches zero items, regardless of the filter order,
             // it just means the query can never be full filled
             // meaning such build cannot exist
-            tempSets = tempSets.filter( ts => ts.getSkillCount(sklObj.skl) >= sklObj.min );
-            console.log('filter: ' + sklObj.skl.name + ', min ' + sklObj.min + ', found: ' + tempSets.length);
+            tempSets = tempSets.filter( ts => ts.getSkillCount(sq.skl) >= sq.min );
+            console.log('filter: ' + sq.skl.name + ', min ' + sq.min + ', found: ' + tempSets.length);
             if(tempSets && !tempSets.length){
                 isFilterProgressError = false;
                 break;
@@ -191,12 +192,12 @@ export class MHService {
      * returns all armor combination sets, each set containing 5 pieces,
      * set filterTier to any value other than 0 to filter by tier
      */
-    private getAllPossibleSetCombination(filterTier: number = 0) {
-        const heads: Armor[] = this.getAllArmor(AType.HEAD, filterTier);
-        const chests: Armor[] = this.getAllArmor(AType.CHEST, filterTier);
-        const arms: Armor[] = this.getAllArmor(AType.ARM, filterTier);
-        const waists: Armor[] = this.getAllArmor(AType.WAIST, filterTier);
-        const legs: Armor[] = this.getAllArmor(AType.LEG, filterTier);
+    private getAllPossibleSetCombination(armorTierFilter: number = 0) {
+        const heads: Armor[] = this.getAllArmor(AType.HEAD, armorTierFilter);
+        const chests: Armor[] = this.getAllArmor(AType.CHEST, armorTierFilter);
+        const arms: Armor[] = this.getAllArmor(AType.ARM, armorTierFilter);
+        const waists: Armor[] = this.getAllArmor(AType.WAIST, armorTierFilter);
+        const legs: Armor[] = this.getAllArmor(AType.LEG, armorTierFilter);
         const allArmorData: Armor[][] = [heads, chests, arms, waists, legs];
         const arg = allArmorData;
 

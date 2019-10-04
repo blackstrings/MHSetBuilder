@@ -65,6 +65,10 @@ export class BuildSet extends MHComponent {
         }
     }
 
+    /**
+     * gem will fill in the lowest tier possible first.
+     * There is a known bug where it sometimes doesn't fill in lowest first.
+     */
     public addGem(gem: Gem): boolean {
         if(this.slots && this.slots.length){
             // find all free slots
