@@ -75,9 +75,10 @@ export class BuildSet extends MHComponent {
 
             // use the first free available one
             for(const slot of freeSlots){
-                //if(!slot.gem && slot.tier >= gem.tier){
+                // you must validate before adding, seems to not work if you dont
+                if(!slot.gem && slot.tier >= gem.tier){
                     return slot.add(gem);
-                //}
+                }
             }
         }
         return false;
