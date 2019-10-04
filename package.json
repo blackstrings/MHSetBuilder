@@ -1,0 +1,22 @@
+{
+  "name": "typescript-proj",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "build-dev": "npm run build && npm run bundle-dev",
+    "build-prod": "npm run build && npm run bundle-prod",
+    "bundle-dev": "browserify build/index.js --debug > dist/bundle.js",
+    "bundle-prod": "browserify build/index.js | uglifyjs > dist/bundle.js"
+  },
+  "keywords": [],
+  "author": "xl",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^3.6.3",
+    "uglify": "^0.1.5"
+  },
+  "dependencies": {}
+}
