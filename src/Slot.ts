@@ -6,7 +6,7 @@ export class Slot extends MHComponent{
     public gem: Gem = null;
 
     constructor(public tier: number){
-        super(name);
+        super('slot');
     }
 
     /** returns true if success, false if not */

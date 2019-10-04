@@ -23,9 +23,9 @@ export class MHService {
         const query =
             {
                 skills: [
+                    {skl: SKL.CRIT_EYE, min: 7},
+                    {skl: SKL.ATK, min: 4},
                     {skl: SKL.HANDICRAFT, min: 1},
-                    {skl: SKL.CRIT_EYE, min: 2},
-                    {skl: SKL.ATK, min: 2},
                 ],
                 extraSlots: [1,1]
             }
@@ -33,7 +33,7 @@ export class MHService {
 
     }
 
-    public querySets(query: {skills: {skl: SKL, min: number}[], extraSlots: number[]} ): void {
+    public querySets(query: {skills: {skl: SKL, min: number}[], extraSlots: number[]}, showLog: boolean = false): void {
         // fix the query so highest tier skill comes first
         this.sortSkillByTier(query.skills);
 
@@ -48,7 +48,11 @@ export class MHService {
 
         const setResults: BuildSet[] = this.getBuildSets(query);
 
-        console.log(setResults);
+        if(showLog){
+            console.log(setResults);
+        } else {
+            console.log('log build sets is disabled');
+        }
     }
 
     /** re orders the skills, highest comes first */
@@ -139,6 +143,7 @@ export class MHService {
             //tempSets.sort( (a,b) => b.def - a.def);
 
             //filter build sets to top 50 only
+            console.log('showing max 50 only for now');
             const maxLimit: number = 50;
             resultSets = tempSets.slice(0, maxLimit);
 
