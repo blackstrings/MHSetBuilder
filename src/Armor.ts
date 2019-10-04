@@ -2,8 +2,8 @@
 import {AType} from './AType';
 import {Slot} from './Slot';
 import {MHComponent} from './MHComponent';
-import {Gem} from './Gem';
 import {SKL} from './SKL';
+import {Gem} from './Gem';
 
 export class Armor extends MHComponent {
     public slots: Slot[] = [];
@@ -23,18 +23,18 @@ export class Armor extends MHComponent {
     }
 
     /** currently not in use as buildset are doing the geming */
-    public add(gem: Gem): boolean {
-        if(this.slots && this.slots.length){
-            for(const slot of this.slots){
-                if(slot.gem === null && slot.tier <= gem.tier){
-                    slot.add(gem);
-                    return true;
-                    break;
-                }
-            }
-        }
-        return false;
-    }
+    // public add(gem: Gem): boolean {
+    //     if(this.slots && this.slots.length){
+    //         for(const slot of this.slots){
+    //             if(slot.gem === null && slot.tier <= gem.tier){
+    //                 slot.add(gem);
+    //                 return true;
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
 
 
 }

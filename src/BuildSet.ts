@@ -33,7 +33,7 @@ export class BuildSet extends MHComponent {
         }
     }
 
-    public add(armor: Armor): boolean {
+    public addArmor(armor: Armor): boolean {
         let isSuccess: boolean = false;
 
         if(armor){
@@ -69,16 +69,45 @@ export class BuildSet extends MHComponent {
         if(this.slots && this.slots.length){
             // find all free slots
             let freeSlots: Slot[] = this.slots.filter( s => s.gem === null);
+
             // sort from lowest tier to highest
             freeSlots = freeSlots.sort( (a,b) => a.tier - b.tier);
+
             // use the first free available one
             for(const slot of freeSlots){
-                if(!slot.gem && slot.tier >= gem.tier){
+                //if(!slot.gem && slot.tier >= gem.tier){
                     return slot.add(gem);
-                }
+                //}
             }
         }
         return false;
+    }
+
+    /** returns the total skill count */
+    public getSkillCount(targetSkill: SKL): number {
+        let result: number = 0;
+
+        // count from base armor
+        this.armors.forEach( amr => {
+            amr.skills.forEach( skl => {
+                if(skl === targetSkill) {
+                    result++;
+                }
+            });
+        });
+
+        // count from gems if slotted in
+        this.slots.forEach(slot => {
+            if(slot.gem) {
+                slot.gem.skls.forEach( skl => {
+                    if(skl === targetSkill) {
+                        result++;
+                    }
+                });
+            }
+        });
+
+        return result;
     }
 
     private addHead(amr: Armor): boolean {
@@ -127,32 +156,5 @@ export class BuildSet extends MHComponent {
         this.def += amr.def;
         this.totalTier += amr.tier;
         if(amr.slots.length) {this.slots.push(...amr.slots)};
-    }
-
-    /** returns the total skill count */
-    public getSkillCount(targetSkill: SKL): number {
-        let result: number = 0;
-
-        // count from base armor
-        this.armors.forEach( amr => {
-            amr.skills.forEach( skl => {
-                if(skl === targetSkill) {
-                    result++;
-                }
-            });
-        });
-
-        // count from gems if slotted in
-        this.slots.forEach(slot => {
-            if(slot.gem) {
-                slot.gem.skls.forEach( skl => {
-                    if(skl === targetSkill) {
-                        result++;
-                    }
-                });
-            }
-        });
-
-        return result;
     }
 }

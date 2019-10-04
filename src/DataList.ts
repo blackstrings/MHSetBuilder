@@ -20,7 +20,7 @@ export const AmrData = [
     {name: 'a2', at: AType.ARM, def: 25, slots: [], skls: [SKL.DEF], tier: 1},
     {name: 'a3', at: AType.ARM, def: 50, slots: [], skls: [SKL.ATK, SKL.ATK], tier: 2},
     {name: 'w1', at: AType.WAIST, def: 25, slots: [1], skls: [SKL.DEF, SKL.DEF], tier: 1},
-    {name: 'w2', at: AType.WAIST, def: 29, slots: [1,1], skls: [SKL.ATK, SKL.CRIT_EYE], tier: 1},
+    {name: 'w2', at: AType.WAIST, def: 29, slots: [3,1,1], skls: [SKL.ATK, SKL.CRIT_EYE], tier: 1},
     {name: 'w3', at: AType.WAIST, def: 50, slots: [1,1], skls: [SKL.ATK], tier: 2},
     {name: 'l1', at: AType.LEG, def: 9, slots: [1], skls: [SKL.ATK, SKL.ATK], tier: 1},
     {name: 'l2', at: AType.LEG, def: 5, slots: [1], skls: [SKL.DEF], tier: 1},

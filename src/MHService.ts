@@ -16,7 +16,6 @@ export class MHService {
 
     constructor(){
 
-        // populate data
         this.populateData();
 
         // test - extra slots compensates for weapons and mantels
@@ -25,8 +24,8 @@ export class MHService {
             {
                 skills: [
                     {skl: SKL.HANDICRAFT, min: 1},
-                    {skl: SKL.CRIT_EYE, min: 7},
-                    {skl: SKL.ATK, min: 7},
+                    {skl: SKL.CRIT_EYE, min: 2},
+                    {skl: SKL.ATK, min: 2},
                 ],
                 extraSlots: [1,1]
             }
@@ -35,8 +34,26 @@ export class MHService {
     }
 
     public querySets(query: {skills: {skl: SKL, min: number}[], extraSlots: number[]} ): void {
-        const results: BuildSet[] = this.getBuildSets(query);
-        console.log(results);
+        // fix the query so highest tier skill comes first
+        this.sortSkillByTier(query.skills);
+
+        console.log('Finding sets for: ');
+
+        // log input query
+        let queryStr: string = '';
+        query.skills.forEach( s => {
+           queryStr += '[' + s.skl.name + ', ' + s.min + '], ';
+        });
+        console.log(queryStr);
+
+        const setResults: BuildSet[] = this.getBuildSets(query);
+
+        console.log(setResults);
+    }
+
+    /** re orders the skills, highest comes first */
+    private sortSkillByTier(skls: {skl: SKL, min: number}[]): void {
+        skls.sort( (a,b) => this.getGem(a.skl).tier - this.getGem(a.skl).tier);
     }
 
     /** Deserialize all json data into data objects for runtime */
@@ -54,7 +71,7 @@ export class MHService {
     private createBuildSet(name: string, data: Armor[], extraSlots: number[]): BuildSet {
         const bs: BuildSet = new BuildSet(name);
         data.forEach(a => {
-            bs.add(a);
+            bs.addArmor(a);
         });
 
         // when extra slots is requested, add more slots onto the set
@@ -79,7 +96,7 @@ export class MHService {
         let tempSets: BuildSet[] = [];
 
         // the final result
-        let resultSets: BuildSet[];
+        let resultSets: BuildSet[] = [];
 
         // make all possible combination from all armor pieces without any filers applied
         // the max possible combination depends on the number in each category multiply to the number apprent in each category
@@ -87,17 +104,20 @@ export class MHService {
         // for best results, we have to create all the combinations posssible first
         // then filter from there using queries
         let allSetCombinations: Armor[][] = this.getAllPossibleSetCombination();
-        console.log('all total armor sets possible: ' + allSetCombinations.length);
+        console.log('max possible combinations: ' + allSetCombinations.length);
 
         // extra slots gets added to eveyr combination if requested
         allSetCombinations.forEach( armorSet => {
-            tempSets.push(this.createBuildSet('b' + counter, armorSet, query.extraSlots));
+            tempSets.push(this.createBuildSet(''+counter, armorSet, query.extraSlots));
             counter++;
         });
 
+        let testCounter: number = 1;
+
         // apply query(s)
         // tempSets.sort( (a,b) => b.getSkillCount(SKL.ATK) - a.getSkillCount(SKL.ATK));
-        query.skills.forEach( skillObj => {
+        let isFilterProgressError: boolean = true;
+        for(const skillObj of query.skills){
             const sklObj: {skl: SKL, min: number} = skillObj;
 
             // try gemming into slots to reach the min req
@@ -107,19 +127,27 @@ export class MHService {
             // it just means the query can never be full filled
             // meaning such build cannot exist
             tempSets = tempSets.filter( ts => ts.getSkillCount(sklObj.skl) >= sklObj.min );
-            console.log('filter: ' + sklObj.skl.name + ', min ' + sklObj.min + ', sets made: ' + tempSets.length);
-        });
+            console.log('filter: ' + sklObj.skl.name + ', min ' + sklObj.min + ', found: ' + tempSets.length);
+            if(tempSets && !tempSets.length){
+                isFilterProgressError = false;
+                break;
+            }
+        };
 
-        // sort by def
-        //tempSets.sort( (a,b) => b.def - a.def);
+        if(isFilterProgressError){
+            // sort by def
+            //tempSets.sort( (a,b) => b.def - a.def);
 
-        //filter build sets to top 50 only
-        const maxLimit: number = 50;
-        resultSets = tempSets.slice(0, maxLimit);
+            //filter build sets to top 50 only
+            const maxLimit: number = 50;
+            resultSets = tempSets.slice(0, maxLimit);
 
-        // calc total query time
-        const totalQueryTime = new Date().getMilliseconds() - startTime;
-        console.log( (totalQueryTime / 1000).toFixed(2) + ' second');
+            // calc total query time
+            const totalQueryTime = new Date().getMilliseconds() - startTime;
+            console.log( (totalQueryTime / 1000).toFixed(2) + ' second');
+        } else {
+            console.warn('Build set not possible');
+        }
 
         return resultSets
     }
