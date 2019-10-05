@@ -25,13 +25,12 @@ export class MHService {
             {
                 skills: [
                     new SKLQry(SKL.CRIT_EYE, 7),
-                    new SKLQry(SKL.HANDICRAFT, 2),
-                    new SKLQry(SKL.ATK, 4),
+                    new SKLQry(SKL.HANDICRAFT, 5),
                 ],
                 extraSlots: [1,1],
-                armorTierFilter: 1
+                armorTierFilter: 0
             }
-        this.querySets(query);
+        this.querySets(query, false);
 
     }
 
@@ -46,8 +45,22 @@ export class MHService {
         query.skills.forEach( s => {
            queryStr += '[' + s.skl.name + ', ' + s.min + '], ';
         });
+        queryStr += 'armor tier: ';
+        let armorTierFilter: string = '';
+        switch(query.armorTierFilter){
+            case 2:
+                armorTierFilter = 'MR only';
+                break;
+            case 1:
+                armorTierFilter = 'HR only';
+            default:
+                armorTierFilter = 'HR & MR';
+        }
+        queryStr += armorTierFilter;
+
         console.log(queryStr);
 
+        // send the query through and start finding the builds
         const setResults: BuildSet[] = this.getBuildSets(query);
 
         if(showLog){
@@ -132,7 +145,7 @@ export class MHService {
             // it just means the query can never be full filled
             // meaning such build cannot exist
             tempSets = tempSets.filter( ts => ts.getSkillCount(sq.skl) >= sq.min );
-            console.log('filter: ' + sq.skl.name + ', min ' + sq.min + ', found: ' + tempSets.length);
+            console.log('filter: ' + sq.skl.name + ', found: ' + tempSets.length);
             if(tempSets && !tempSets.length){
                 isFilterProgressError = false;
                 break;
