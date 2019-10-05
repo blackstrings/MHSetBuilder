@@ -4,6 +4,7 @@ import {Slot} from './Slot';
 import {MHComponent} from './MHComponent';
 import {SKL} from './SKL';
 import {Gem} from './Gem';
+import {SetBonus} from './SetBonus';
 
 export class Armor extends MHComponent {
     public slots: Slot[] = [];
@@ -13,7 +14,9 @@ export class Armor extends MHComponent {
                 public def: number,
                 slots: number[],
                 public skills: SKL[],
-                public tier: number)
+                public tier: number,
+                public sb: SetBonus = SetBonus.NA
+                )
     {
         super(name);
 

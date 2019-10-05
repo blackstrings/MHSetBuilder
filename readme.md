@@ -6,6 +6,10 @@
 - npm i -g browserify
 - npm i -g ts-node
 
+# Note
+- if running using ts-node, limit the data to only 5 sets to not run out of memory
+- if running in browser, it can handle more memory
+
 ## to build
 - npm run build
     - convert typescript into javascript

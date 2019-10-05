@@ -47,13 +47,13 @@ export const AmrData = [
     {name: 'vespoid greaves beta+', at: AType.LEG, def: 116, slots: [4,1], skls: [SKL.CRIT_DRAW], tier: 2},
 
     {name: 'hornetaur helm alpha+', at: AType.HEAD, def: 116, slots: [2], skls: [SKL.WEAK_EXP, SKL.DRG_ATK, SKL.DRG_ATK], tier: 2},
-    {name: 'hornetaur mail alpha+', at: AType.CHEST, def: 116, slots: [2,1], skls: [SKL.EFFLUVIA, SKL.HUNGER_RES, SKL.HUNGER_RES], tier: 2},
+    {name: 'hornetaur mail alpha+', at: AType.CHEST, def: 116, slots: [2,1], skls: [SKL.EFFLU_EXP, SKL.HUNGER_RES, SKL.HUNGER_RES], tier: 2},
     {name: 'hornetaur vambraces alpha+', at: AType.ARM, def: 116, slots: [3], skls: [SKL.FREE_MEAL, SKL.HANDICRAFT], tier: 2},
     {name: 'hornetaur coil alpha+', at: AType.WAIST, def: 116, slots: [2], skls: [SKL.WEAK_EXP, SKL.HUNGER_RES], tier: 2},
     {name: 'hornetaur greaves alpha+', at: AType.LEG, def: 116, slots: [2,1], skls: [SKL.HANDICRAFT, SKL.DRG_ATK], tier: 2},
 
     {name: 'hornetaur helm beta+', at: AType.HEAD, def: 116, slots: [2], skls: [SKL.WEAK_EXP, SKL.DRG_ATK], tier: 2},
-    {name: 'hornetaur mail beta+', at: AType.CHEST, def: 116, slots: [2,1], skls: [SKL.EFFLUVIA], tier: 2},
+    {name: 'hornetaur mail beta+', at: AType.CHEST, def: 116, slots: [2,1], skls: [SKL.EFFLU_EXP], tier: 2},
     {name: 'hornetaur vambraces beta+', at: AType.ARM, def: 116, slots: [3], skls: [SKL.FREE_MEAL], tier: 2},
     {name: 'hornetaur coil beta+', at: AType.WAIST, def: 116, slots: [2], skls: [SKL.WEAK_EXP], tier: 2},
     {name: 'hornetaur greaves beta+', at: AType.LEG, def: 116, slots: [2,1], skls: [SKL.HANDICRAFT], tier: 2},
@@ -75,5 +75,55 @@ export const AmrData = [
 
     {name: 'cortos cape alpha+', at: AType.CHEST, def: 116, slots: [1,1], skls: [SKL.HUNGER_RES, SKL.HUNGER_RES, SKL.JUMP_MAST], tier: 2},
     {name: 'cortos cape beta+', at: AType.CHEST, def: 116, slots: [4], skls: [SKL.HUNGER_RES, SKL.JUMP_MAST], tier: 2},
+
+    {name: 'jagras helm alpha+', at: AType.HEAD, def: 116, slots: [2], skls: [SKL.SPEED_EAT, SKL.SPEED_EAT, SKL.ATK, SKL.ATK], tier: 2},
+    {name: 'jagras mail alpha+', at: AType.CHEST, def: 116, slots: [3], skls: [SKL.EVADE_EXT, SKL.ATK], tier: 2},
+    {name: 'jagras vambraces alpha+', at: AType.ARM, def: 116, slots: [2], skls: [SKL.EVADE_EXT, SKL.EVADE_EXT, SKL.REC_UP], tier: 2},
+    {name: 'jagras coil alpha+', at: AType.WAIST, def: 116, slots: [2,1], skls: [SKL.REC_UP, SKL.SPEED_EAT], tier: 2},
+    {name: 'jagras greaves alpha+', at: AType.LEG, def: 116, slots: [2,1], skls: [SKL.FREE_MEAL, SKL.REC_UP], tier: 2},
+
+    {name: 'jagras helm beta+', at: AType.HEAD, def: 116, slots: [4,1], skls: [SKL.SPEED_EAT,SKL.ATK], tier: 2},
+    {name: 'jagras mail beta+', at: AType.CHEST, def: 116, slots: [4], skls: [SKL.EVADE_EXT, SKL.ATK], tier: 2},
+    {name: 'jagras vambraces beta+', at: AType.ARM, def: 116, slots: [4], skls: [SKL.EVADE_EXT, SKL.REC_UP], tier: 2},
+    {name: 'jagras coil beta+', at: AType.WAIST, def: 116, slots: [4,1], skls: [SKL.REC_UP], tier: 2},
+    {name: 'jagras greaves beta+', at: AType.LEG, def: 116, slots: [4,1], skls: [SKL.FREE_MEAL], tier: 2},
+
+    {name: 'tzitzi helm alpha+', at: AType.HEAD, def: 116, slots: [2,1], skls: [SKL.FREE_ELE, SKL.STUN_RES], tier: 2},
+    {name: 'tzitzi mail alpha+', at: AType.CHEST, def: 116, slots: [1,1], skls: [SKL.CONSTITU, SKL.CONSTITU, SKL.WTR_ATK, SKL.WTR_ATK], tier: 2},
+    {name: 'tzitzi vambraces alpha+', at: AType.ARM, def: 116, slots: [2], skls: [SKL.STUN_RES, SKL.STUN_RES, SKL.WIDE_RANGE, SKL.WIDE_RANGE], tier: 2},
+    {name: 'tzitzi coil alpha+', at: AType.WAIST, def: 116, slots: [2], skls: [SKL.WIDE_RANGE, SKL.WIDE_RANGE, SKL.WTR_ATK, SKL.WTR_ATK], tier: 2},
+    {name: 'tzitzi greaves alpha+', at: AType.LEG, def: 116, slots: [3], skls: [SKL.SLEEP_RES, SKL.SLEEP_RES, SKL.WIDE_RANGE], tier: 2},
+
+    {name: 'tzitzi helm beta+', at: AType.HEAD, def: 116, slots: [4,1], skls: [SKL.FREE_ELE], tier: 2},
+    {name: 'tzitzi mail beta+', at: AType.CHEST, def: 116, slots: [4,1], skls: [SKL.CONSTITU, SKL.WTR_ATK], tier: 2},
+    {name: 'tzitzi vambraces beta+', at: AType.ARM, def: 116, slots: [4], skls: [SKL.STUN_RES, SKL.STUN_RES, SKL.WIDE_RANGE], tier: 2},
+    {name: 'tzitzi coil beta+', at: AType.WAIST, def: 116, slots: [4,1], skls: [SKL.WIDE_RANGE, SKL.WIDE_RANGE], tier: 2},
+    {name: 'tzitzi greaves beta+', at: AType.LEG, def: 116, slots: [4], skls: [SKL.SLEEP_RES, SKL.WIDE_RANGE], tier: 2},
+
+    {name: 'girros headgear alpha+', at: AType.HEAD, def: 116, slots: [3], skls: [SKL.HORN_MEASTRO, SKL.HORN_MEASTRO, SKL.PARA_RES], tier: 2},
+    {name: 'girros mail alpha+', at: AType.CHEST, def: 116, slots: [2], skls: [SKL.PARA_RES, SKL.PARA_RES, SKL.FREE_ELE], tier: 2},
+    {name: 'girros vambraces alpha+', at: AType.ARM, def: 116, slots: [1], skls: [SKL.FREE_ELE, SKL.EFFLU_RES, SKL.EFFLU_RES], tier: 2},
+    {name: 'girros coil alpha+', at: AType.WAIST, def: 116, slots: [3], skls: [SKL.EFFLU_EXP, SKL.PARA_ATK, SKL.PARA_ATK], tier: 2},
+    {name: 'girros greaves alpha+', at: AType.LEG, def: 116, slots: [1], skls: [SKL.PARA_ATK, SKL.PARA_ATK, SKL.FREE_ELE], tier: 2},
+
+    {name: 'girros headgear beta+', at: AType.HEAD, def: 116, slots: [4], skls: [SKL.HORN_MEASTRO, SKL.HORN_MEASTRO], tier: 2},
+    {name: 'girros mail beta+', at: AType.CHEST, def: 116, slots: [4,2], skls: [SKL.PARA_RES, SKL.PARA_RES], tier: 2},
+    {name: 'girros vambraces beta+', at: AType.ARM, def: 116, slots: [4], skls: [SKL.FREE_ELE, SKL.EFFLU_RES], tier: 2},
+    {name: 'girros coil beta+', at: AType.WAIST, def: 116, slots: [4,2], skls: [SKL.EFFLU_EXP], tier: 2},
+    {name: 'girros greaves beta+', at: AType.LEG, def: 116, slots: [4], skls: [SKL.PARA_ATK, SKL.PARA_ATK], tier: 2},
+
+    {name: 'dodogama helm alpha+', at: AType.HEAD, def: 120, slots: [3], skls: [SKL.BLAST_RES, SKL.BLAST_RES, SKL.BOMBBARD], tier: 2},
+    {name: 'dodogama mail alpha+', at: AType.CHEST, def: 120, slots: [2], skls: [SKL.BLAST_ATK, SKL.BLAST_ATK, SKL.ARTILLERY], tier: 2},
+    {name: 'dodogama vambraces alpha+', at: AType.ARM, def: 120, slots: [2], skls: [SKL.BOMBBARD, SKL.BOMBBARD, SKL.BLAST_ATK], tier: 2},
+    {name: 'dodogama coil alpha+', at: AType.WAIST, def: 120, slots: [2,1], skls: [SKL.ARTILLERY, SKL.ARTILLERY, SKL.BLAST_RES], tier: 2},
+    {name: 'dodogama greaves alpha+', at: AType.LEG, def: 120, slots: [2,1], skls: [SKL.CAP_BST, SKL.BLAST_ATK], tier: 2},
+
+    {name: 'dodogama helm beta+', at: AType.HEAD, def: 120, slots: [4], skls: [SKL.BLAST_RES, SKL.BLAST_RES], tier: 2},
+    {name: 'dodogama mail beta+', at: AType.CHEST, def: 120, slots: [4], skls: [SKL.BLAST_ATK, SKL.BLAST_ATK], tier: 2},
+    {name: 'dodogama vambraces beta+', at: AType.ARM, def: 120, slots: [4], skls: [SKL.BOMBBARD, SKL.BLAST_ATK], tier: 2},
+    {name: 'dodogama coil beta+', at: AType.WAIST, def: 120, slots: [4,1], skls: [SKL.ARTILLERY, SKL.ARTILLERY], tier: 2},
+    {name: 'dodogama greaves beta+', at: AType.LEG, def: 120, slots: [4,1], skls: [SKL.CAP_BST], tier: 2},
+
+
 
 ];

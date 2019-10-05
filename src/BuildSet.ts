@@ -4,6 +4,7 @@ import {AType} from './AType';
 import {Slot} from './Slot';
 import {Gem} from './Gem';
 import {SKL} from './SKL';
+import {SetBonus} from './SetBonus';
 
 /** does not accoutn for weapons or mantels, these should be added as slots instead */
 export class BuildSet extends MHComponent {
@@ -19,6 +20,13 @@ export class BuildSet extends MHComponent {
     public def: number = 0;
     public slots: Slot[] = [];
     public totalTier: number = 0;
+
+    /**
+     * can have multiple set bonuses.
+     * When there is a complete set, extra skills will get put in here
+     * to be accounted for
+     */
+    public setBonusSkills: SKL[] = [];
 
     constructor(name: string){
         super(name);
@@ -101,6 +109,13 @@ export class BuildSet extends MHComponent {
             });
         });
 
+        // count set bonus skills - these get populated during buildSet creation
+        this.setBonusSkills.forEach( s => {
+           if(s === targetSkill){
+               result++;
+           }
+        });
+
         // count from gems if slotted in
         this.slots.forEach(slot => {
             if(slot.gem) {
@@ -158,8 +173,51 @@ export class BuildSet extends MHComponent {
 
     private updateStats(amr: Armor): void {
         this.armors.push(amr);
+
+        // compute set bonuses when set has all 5 pieces
+        if(this.armors.length === 5){
+            this.computeSetBonuses();
+        }
+
+        // update stats
         this.def += amr.def;
         this.totalTier += amr.tier;
-        if(amr.slots.length) {this.slots.push(...amr.slots)};
+
+        // collect armor slots into the slots pool
+        if(amr.slots.length) {
+            this.slots.push(...amr.slots)
+        };
+    }
+
+    /** use to check if there are any set bonuses that should activate, if so activate them */
+    private computeSetBonuses(): void {
+        let sbs: SetBonus[] = [];
+
+        // collect all unique set bonuses
+        this.armors.forEach( a => {
+           if(a.sb && a.sb !== SetBonus.NA){
+               sbs.push(a.sb);
+           }
+        });
+
+        // create a unique array set, removing all duplicates
+        sbs = [...new Set(sbs)];
+
+        // evaluate if enough pieces to activate a set bonus
+        // looping entire armors array per setBonus to validate
+        sbs.forEach( sb => {
+            let count: number = 0;
+            this.armors.forEach( amr => {
+                if(amr.sb === sb){
+                    count++;
+                }
+            });
+
+            // activate if enough pieces
+            if(count >= sb.piecesReq){
+                this.setBonusSkills.push(...sb.skls);
+            }
+        });
+
     }
 }

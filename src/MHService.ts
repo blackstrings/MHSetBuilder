@@ -6,6 +6,7 @@ import {SKL} from './SKL';
 import {Gem} from './Gem';
 import {SKLQry} from './SKLQry';
 import {Slot} from './Slot';
+import {Query} from './Query';
 
 export class MHService {
 
@@ -21,29 +22,41 @@ export class MHService {
 
         // test - extra slots compensates for weapons and mantels
         // todo order shouldn't matter but right now it does, high tier has to go first
-        const query =
-            {
-                skills: [
-                    new SKLQry(SKL.CRIT_EYE, 7),
-                    new SKLQry(SKL.HANDICRAFT, 5),
-                ],
-                extraSlots: [1,1],
-                armorTierFilter: 0
-            }
-        this.querySets(query, false);
+        const query = new Query([new SKLQry(SKL.CRIT_EYE, 7), new SKLQry(SKL.HANDICRAFT, 5)], [1,1], 0);
+
+        this.querySets(query, true);
 
     }
 
-    public querySets(query: {skills: SKLQry[], extraSlots: number[], armorTierFilter: number}, showLog: boolean = false): void {
+    /**
+     * todo when set bonuses are requested, we can optimize querying for sets that will never be possible
+     * by creating combinations starting first with only set bonuses activated
+     * @param query
+     * @param showLog
+     */
+    public querySets(query: Query, showLog: boolean = false): void {
         // fix the query so highest tier skill comes first
         query.skills = this.sortSkillByTier(query.skills);
 
         console.log('Finding sets for: ');
 
         // log input query
+        console.log(this.getQueryToString(query));
+
+        // send the query through and start finding the builds
+        const setResults: BuildSet[] = this.getBuildSets(query);
+
+        if(showLog){
+            console.log(setResults);
+        } else {
+            console.log('log build sets is disabled');
+        }
+    }
+
+    private getQueryToString(query: Query): string {
         let queryStr: string = '';
         query.skills.forEach( s => {
-           queryStr += '[' + s.skl.name + ', ' + s.min + '], ';
+            queryStr += '[' + s.skl.name + ', ' + s.min + '], ';
         });
         queryStr += 'armor tier: ';
         let armorTierFilter: string = '';
@@ -57,17 +70,7 @@ export class MHService {
                 armorTierFilter = 'HR & MR';
         }
         queryStr += armorTierFilter;
-
-        console.log(queryStr);
-
-        // send the query through and start finding the builds
-        const setResults: BuildSet[] = this.getBuildSets(query);
-
-        if(showLog){
-            console.log(setResults);
-        } else {
-            console.log('log build sets is disabled');
-        }
+        return queryStr;
     }
 
     /** re orders the skills, highest comes first */
@@ -104,7 +107,7 @@ export class MHService {
      * query = the skills to create and filter
      * extraSlots = use this for mantles or weapons with extra slots ex: [3,2,2] = 3 slots with teir 3, 2, 2
      */
-    private getBuildSets(query: {skills: SKLQry[], extraSlots: number[], armorTierFilter: number} ): BuildSet[] {
+    private getBuildSets(query: Query): BuildSet[] {
         const date: Date = new Date();
         const startTime = date.getMilliseconds();
 
@@ -130,8 +133,6 @@ export class MHService {
             tempSets.push(this.createBuildSet(''+counter, armorSet, query.extraSlots));
             counter++;
         });
-
-        let testCounter: number = 1;
 
         // apply query(s)
         // tempSets.sort( (a,b) => b.getSkillCount(SKL.ATK) - a.getSkillCount(SKL.ATK));
