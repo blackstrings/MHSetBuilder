@@ -15,7 +15,7 @@ export class Armor extends MHComponent {
                 slots: number[],
                 public skills: SKL[],
                 public tier: number,
-                public sb: SetBonus = SetBonus.NA
+                public setBs: SetBonus[] = []
                 )
     {
         super(name);

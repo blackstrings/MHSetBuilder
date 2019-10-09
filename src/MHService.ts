@@ -7,6 +7,7 @@ import {Gem} from './Gem';
 import {SKLQry} from './SKLQry';
 import {Slot} from './Slot';
 import {Query} from './Query';
+import {SetBonus} from "./SetBonus";
 
 export class MHService {
 
@@ -22,7 +23,7 @@ export class MHService {
 
         // test - extra slots compensates for weapons and mantels
         // todo order shouldn't matter but right now it does, high tier has to go first
-        const query = new Query([new SKLQry(SKL.CRIT_EYE, 7), new SKLQry(SKL.HANDICRAFT, 5)], [1,1], 0);
+        const query = new Query([new SKLQry(SKL.CRIT_EYE, 3), new SKLQry(SKL.HANDICRAFT, 5)], [1,1], [SetBonus.TEO2], 0);
 
         this.querySets(query, true);
 
@@ -41,7 +42,7 @@ export class MHService {
         console.log('Finding sets for: ');
 
         // log input query
-        console.log(this.getQueryToString(query));
+        console.log(this.getQueryAsString(query));
 
         // send the query through and start finding the builds
         const setResults: BuildSet[] = this.getBuildSets(query);
@@ -53,12 +54,21 @@ export class MHService {
         }
     }
 
-    private getQueryToString(query: Query): string {
+    private getQueryAsString(query: Query): string {
         let queryStr: string = '';
         query.skills.forEach( s => {
             queryStr += '[' + s.skl.name + ', ' + s.min + '], ';
         });
+
+        let setBonuses: string = '[';
+        query.setBonus.forEach( sb => {
+           setBonuses += sb.toString() + ', ';
+        });
+        setBonuses += '], ';
+        queryStr += setBonuses;
+
         queryStr += 'armor tier: ';
+
         let armorTierFilter: string = '';
         switch(query.armorTierFilter){
             case 2:
@@ -73,7 +83,7 @@ export class MHService {
         return queryStr;
     }
 
-    /** re orders the skills, highest comes first */
+    /** re orders the skills, highest tier comes first */
     private sortSkillByTier(sq: SKLQry[]): SKLQry[] {
         return sq.sort( (a,b) => this.getGem(b.skl).tier - this.getGem(a.skl).tier);
     }
@@ -85,7 +95,7 @@ export class MHService {
         });
 
         AmrData.forEach( a => {
-            this.armors.push(new Armor(a.name, a.at, a.def, a.slots, a.skls, a.tier));
+            this.armors.push(new Armor(a.name, a.at, a.def, a.slots, a.skls, a.tier, a.sbs));
         });
     }
 
@@ -114,7 +124,7 @@ export class MHService {
         // to count as we make each set
         let counter: number = 0;
 
-        // as we filter store the sets here
+        // as we filter each time, store the sets here
         let tempSets: BuildSet[] = [];
 
         // the final result
@@ -125,16 +135,60 @@ export class MHService {
         // ex: 2(heads) * 3(chest) * 2(arms) * 2(legs) = 24 total possible combination
         // for best results, we have to create all the combinations posssible first
         // then filter from there using queries
-        let allSetCombinations: Armor[][] = this.getAllPossibleSetCombination(query.armorTierFilter);
-        console.log('max possible combinations: ' + allSetCombinations.length);
+        let allArmorSets: Armor[][] = this.getAllPossibleSetCombination(query.armorTierFilter);
+        console.log('max possible combinations: ' + allArmorSets.length);
 
-        // extra slots gets added to eveyr combination if requested
-        allSetCombinations.forEach( armorSet => {
-            tempSets.push(this.createBuildSet(''+counter, armorSet, query.extraSlots));
+        allArmorSets.forEach( armorSet => {
+            // extra slots gets added to every combination if requested
+            const buildSet: BuildSet = this.createBuildSet(''+counter, armorSet, query.extraSlots);
+
+            // if there is set bonus query to filter, only consider the build sets matching the query setBonuses
+            if(query.setBonus.length){
+                this.filterBuildSetWithQualifyingSetBonusOnly(query, tempSets, buildSet);
+            } else {
+                // otherwise analyze all build sets when there is no set bonus to filter for (more heavier performance)
+                tempSets.push(buildSet);
+            }
             counter++;
         });
 
-        // apply query(s)
+        if(tempSets.length){
+            if(query.setBonus.length){
+                console.log('filter: setBonuses, found: ' + tempSets.length);
+            }
+            // filter SetBuilds by skills as a last and final priority
+            resultSets = this.filterBuildSetsWithSkills(query, tempSets);
+        } else {
+            console.warn('query set is not possible');
+        }
+
+        // calc total query time
+        const totalQueryTime = new Date().getMilliseconds() - startTime;
+        console.log( (totalQueryTime / 1000).toFixed(2) + ' second');
+        return resultSets;
+    }
+
+    private filterBuildSetWithQualifyingSetBonusOnly(query: Query, tempSets: BuildSet[], activeBuildSet: BuildSet): void {
+        let sbMatchReqCounter: number = 0;
+
+        // add only buildSet that have an active set bonus matching the query
+        query.setBonus.forEach( querySb => {
+            activeBuildSet.activeSetBonuses.forEach( asb => {
+                if(asb === querySb){
+                    sbMatchReqCounter++;
+                }
+            });
+        });
+
+        // we only add the buildSet if it has all the required sb requested in query
+        if(sbMatchReqCounter === query.setBonus.length){
+            tempSets.push(activeBuildSet);
+        } // else it means although the set may have a matching set bonus, build set does not have all the req sb requested
+
+    }
+
+    private filterBuildSetsWithSkills(query: Query, tempSets: BuildSet[]): BuildSet[] {
+        let resultSets: BuildSet[] = [];
         // tempSets.sort( (a,b) => b.getSkillCount(SKL.ATK) - a.getSkillCount(SKL.ATK));
         let isFilterProgressError: boolean = true;
         for(const sq of query.skills){
@@ -162,14 +216,10 @@ export class MHService {
             const maxLimit: number = 50;
             resultSets = tempSets.slice(0, maxLimit);
 
-            // calc total query time
-            const totalQueryTime = new Date().getMilliseconds() - startTime;
-            console.log( (totalQueryTime / 1000).toFixed(2) + ' second');
         } else {
             console.warn('Build set not possible');
         }
-
-        return resultSets
+        return resultSets;
     }
 
     private gemAllSetsWithSkillToMin(sets: BuildSet[], skl: SKL, min: number): void {
@@ -264,7 +314,7 @@ export class MHService {
         return null;
     }
 
-    /** when tier is any value other than zero, filter by teir */
+    /** when tier is any value other than zero, filters only by tier */
     private getAllArmor(at: AType, tier: number = 0): Armor[] {
         if(this.armors){
             if(tier >= 1){

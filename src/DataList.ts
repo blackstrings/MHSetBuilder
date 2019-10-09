@@ -1,6 +1,7 @@
 import {AType} from './AType';
 import {Cat} from './Cat';
 import {SKL} from './SKL';
+import {SetBonus} from './SetBonus';
 
 export const GemData = [
     {name: 'attack', tier: 1, skls: [SKL.ATK], cat: Cat.DPS},
@@ -15,6 +16,12 @@ export const AmrData = [
     {name: 'bone vambraces alpha+', at: AType.ARM, def: 114, slots: [2], skls: [SKL.SLUGGER, SKL.SLUGGER, SKL.ATK], tier: 2},
     {name: 'bone coil alpha+', at: AType.WAIST, def: 114, slots: [3], skls: [SKL.HORN_MEASTRO, SKL.PART_BREAKER], tier: 2},
     {name: 'bone greaves alpha+', at: AType.LEG, def: 114, slots: [3], skls: [SKL.SLUGGER, SKL.HORN_MEASTRO], tier: 2},
+
+    {name: 'test helm+', at: AType.HEAD, def: 116, slots: [4,1], skls: [SKL.SHEATH], tier: 2, sbs: [SetBonus.TEO, SetBonus.TEO2]},
+    {name: 'test mail beta+', at: AType.CHEST, def: 116, slots: [4,1], skls: [SKL.WIND_PROOF], tier: 2, sbs: [SetBonus.TEO, SetBonus.TEO2]},
+    {name: 'test vambraces beta+', at: AType.ARM, def: 116, slots: [4,1], skls: [SKL.PARA_ATK], tier: 2, sbs: [SetBonus.TEO, SetBonus.TEO2]},
+    {name: 'test coil beta+', at: AType.WAIST, def: 116, slots: [3,1], skls: [SKL.PARA_RES, SKL.PARA_RES], tier: 2, sbs: [SetBonus.TEO, SetBonus.TEO2]},
+    {name: 'test greaves beta+', at: AType.LEG, def: 116, slots: [4,1], skls: [SKL.CRIT_DRAW], tier: 2, sbs: [SetBonus.TEO, SetBonus.TEO2]},
 
     {name: 'bone helm beta+', at: AType.HEAD, def: 114, slots: [4], skls: [SKL.HP, SKL.PART_BREAKER], tier: 2},
     {name: 'bone mail beta+', at: AType.CHEST, def: 114, slots: [4,1], skls: [SKL.ATK], tier: 2},
@@ -123,7 +130,6 @@ export const AmrData = [
     {name: 'dodogama vambraces beta+', at: AType.ARM, def: 120, slots: [4], skls: [SKL.BOMBBARD, SKL.BLAST_ATK], tier: 2},
     {name: 'dodogama coil beta+', at: AType.WAIST, def: 120, slots: [4,1], skls: [SKL.ARTILLERY, SKL.ARTILLERY], tier: 2},
     {name: 'dodogama greaves beta+', at: AType.LEG, def: 120, slots: [4,1], skls: [SKL.CAP_BST], tier: 2},
-
 
 
 ];
