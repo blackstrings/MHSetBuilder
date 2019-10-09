@@ -173,11 +173,12 @@ export class MHService {
 
         // add only buildSet that have an active set bonus matching the query
         query.setBonus.forEach( querySb => {
-            activeBuildSet.activeSetBonuses.forEach( asb => {
-                if(asb === querySb){
+            for(const asb of activeBuildSet.activeSetBonuses) {
+                if (asb === querySb) {
                     sbMatchReqCounter++;
+                    break;
                 }
-            });
+            };
         });
 
         // we only add the buildSet if it has all the required sb requested in query
