@@ -14,6 +14,7 @@ export class SKL extends MHComponent {
         if(!this.surName){
             this.surName = name;
         }
+        SKL.map.set(name, this);
     }
 
     public static readonly ATK = new SKL('attack booster');

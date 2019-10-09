@@ -22,11 +22,53 @@ export class MHService {
         this.populateData();
 
         // test - extra slots compensates for weapons and mantels
-        // todo order shouldn't matter but right now it does, high tier has to go first
-        const query = new Query([new SKLQry(SKL.CRIT_EYE, 3), new SKLQry(SKL.HANDICRAFT, 5)], [1,1], [SetBonus.TEO2], 0);
+        // const query = new Query([new SKLQry(SKL.CRIT_EYE, 3), new SKLQry(SKL.HANDICRAFT, 5)], [1,1], [SetBonus.TEO2], 0);
 
+        const query: Query = this.createQuery(
+            {
+                skQrys: [
+                    {skl: 'critical eye', min: 3},
+                    {skl: 'handicraft', min: 3}
+                ],
+                sbQrys: [
+                    {sb: 'teostra fierce2'}
+                ],
+                extraSlots: [],
+                tier: 0
+
+            }
+            );
         this.querySets(query, true);
 
+    }
+
+    /** translates data query info into a real query object */
+    public createQuery(query: { skQrys: {skl: string, min: number}[], sbQrys: {sb: string}[], extraSlots: number[], tier: number}): Query {
+        const sklQryies: SKLQry[] = [];
+        if(query.skQrys && query.skQrys.length){
+            query.skQrys.forEach(sq => {
+                const skl: SKL = SKL.get(sq.skl);
+                if(skl){
+                    sklQryies.push(new SKLQry(skl, sq.min));
+                } else {
+                    console.error('Failed to include skl query: ' + sq.skl + ' not found!');
+                }
+            });
+        }
+
+        const sbs: SetBonus[] = [];
+        if(query.sbQrys && query.sbQrys.length){
+            query.sbQrys.forEach(sbQry => {
+                const foundSB: SetBonus = SetBonus.get(sbQry.sb);
+                if(foundSB){
+                    sbs.push(foundSB);
+                } else {
+                    console.error('Failed to include sb query: ' + sbQry.sb + ' not found!');
+                }
+            });
+        }
+
+        return new Query(sklQryies, query.extraSlots, sbs, query.tier);
     }
 
     /**
@@ -45,12 +87,17 @@ export class MHService {
         console.log(this.getQueryAsString(query));
 
         // send the query through and start finding the builds
-        const setResults: BuildSet[] = this.getBuildSets(query);
+        if(query.skills.length || query.setBonus.length){
 
-        if(showLog){
-            console.log(setResults);
-        } else {
-            console.log('log build sets is disabled');
+            const setResults: BuildSet[] = this.getBuildSets(query);
+
+            if(showLog){
+                console.log(setResults);
+            } else {
+                console.log('log build sets is disabled');
+            }
+        }else{
+            console.warn('no build sets found, query is invalid or empty');
         }
     }
 
@@ -118,8 +165,8 @@ export class MHService {
      * extraSlots = use this for mantles or weapons with extra slots ex: [3,2,2] = 3 slots with teir 3, 2, 2
      */
     private getBuildSets(query: Query): BuildSet[] {
-        const date: Date = new Date();
-        const startTime = date.getMilliseconds();
+        const startTime: number = window.performance.now();
+        // console.time('setQuery');    // only works for console printouts
 
         // to count as we make each set
         let counter: number = 0;
@@ -163,8 +210,9 @@ export class MHService {
         }
 
         // calc total query time
-        const totalQueryTime = new Date().getMilliseconds() - startTime;
-        console.log( (totalQueryTime / 1000).toFixed(2) + ' second');
+        // console.timeEnd('setQuery');
+        const queryTime: number = (window.performance.now() - startTime) / 1000;
+        console.log('queryTime: ' + queryTime.toFixed(2) + ' sec');
         return resultSets;
     }
 

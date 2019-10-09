@@ -13,6 +13,7 @@ export class SetBonus extends MHComponent {
      */
     constructor(name, public piecesReq: number, public skls: SKL[]){
         super(name);
+        SetBonus.map.set(name, this);
     }
 
     /** not available */
